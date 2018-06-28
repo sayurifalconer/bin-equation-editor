@@ -1,0 +1,44 @@
+%for use in the lab on the windows computers
+
+eeglab
+%load the erpset into matlab
+ERP = pop_loaderp( 'filename', 'M15S23.erp', 'filepath', 'Z:\PROJECTS\MPH_H\MORPH15\dat\erp\S23\' );
+
+%add the bin equations to the erp set
+ERP = pop_binoperator( ERP, 'Z:\PROJECTS\MPH_H\MORPH15\srp\m15_diffeq.txt');
+
+%save the erp set
+ERP = pop_savemyerp(ERP, 'erpname', 'M15S23', 'filename', 'M15S23_diffeq.erp', 'filepath', 'Z:\PROJECTS\MPH_H\MORPH15\dat\erp\S23');
+
+ERP = pop_savemyerp(ERP, 'erpname', '31', 'filename', 'M15S31_diffeq.erp', 'filepath', 'Z:\PROJECTS\MPH_H\MORPH15\dat\erp\S31');
+
+
+
+
+%to do them all at the same time
+
+eeglab
+
+%import the erp sets from a text file with only the file names DO NOT INCLUDE FILEPATHS
+A = importdata('Z:/PROJECTS/MPH_H/MORPH15/dat/erp/m15_filenames_2.txt');
+
+%load the erp sets
+ALLERP = arrayfun(@(s) pop_loaderp('filename', s, 'filepath', 'Z:\PROJECTS\MPH_H\MORPH15\dat\erp\erp_files'),A)
+
+%to sync with gui:
+erplab redraw;
+
+%mount the bin equations
+B = pop_binoperator( ERP, 'Z:\PROJECTS\MPH_H\MORPH15\srp\m15_diffeq.txt');
+
+%OR
+ERP = pop_binoperator( ERP, {  'b7 = b3 - b1 Label UNR - REL High',  'b8 = b4 - b2 Label UNR - REL Low',  'b9 = (b1+b2)/2 label All Related',...
+  'b10 = (b3+b4)/2 label All Unrelated',  'b11 = (b1+b3)/2 label All High',  'b12 = (b2+b4)/2 label All Low'});
+
+%write them to each erp set in the gui
+erplab redraw
+
+
+
+%see how many bins each has
+C = arrayfun(@(s) getfield(s,'nbin'), ALLERP);
